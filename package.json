@@ -1,5 +1,5 @@
 {
-  "name": "@lobo/copy",
+  "name": "copy-directory",
   "version": "1.0.0",
   "description": "Easy copy files for nodejs.",
   "main": "index.js",
