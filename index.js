@@ -2,16 +2,20 @@ const fs = require('fs')
 const path = require('path')
 const chalk = require('chalk')
 
-function copyDir(sourceDirectory, targetDirectory) {
-    
+function copyDirContent(sourceDirectory, targetDirectory) {
+
+    if (!fs.statSync(sourceDirectory).isDirectory()) {
+        throw new Error(`${sourceDirectory} não é o caminho de um diretório`)
+    }
+
     if (!fs.existsSync(targetDirectory)) {
-        fs.mkdirSync(targetDirectory, {recursive: true})
+        fs.mkdirSync(targetDirectory, { recursive: true })
     }
 
     fs.readdirSync(sourceDirectory).forEach(fileOrDirector => {
         const filePath = path.resolve(sourceDirectory, fileOrDirector)
-
         const fsStats = fs.statSync(filePath)
+
         if (fsStats.isFile()) {
             console.info(
                 'copy ' +
@@ -23,9 +27,20 @@ function copyDir(sourceDirectory, targetDirectory) {
             const newSourceDir = path.resolve(sourceDirectory, fileOrDirector)
             const newTargetDir = path.resolve(targetDirectory, fileOrDirector)
             fs.mkdirSync(newTargetDir)
-            copyDir(newSourceDir, newTargetDir)
+            copyDirContent(newSourceDir, newTargetDir)
         }
     })
+}
+
+function copyDir(sourceDirectory, targetDirectory) {
+    if (!fs.statSync(sourceDirectory).isDirectory()) {
+        throw new Error(`${sourceDirectory} não é o caminho de um diretório`)
+    }
+
+    const dirname = path.basename(sourceDirectory)
+    const target = path.resolve(targetDirectory, dirname)
+
+    copyDirContent(sourceDirectory, target)
 }
 
 const copyDirAsync = (function () {
@@ -34,7 +49,7 @@ const copyDirAsync = (function () {
 
     return function copyAsync(sourceDirectory, targetDirectory, callBack) {
         if (!fs.existsSync(targetDirectory)) {
-            fs.mkdirSync(targetDirectory, {recursive: true})
+            fs.mkdirSync(targetDirectory, { recursive: true })
         }
         fs.readdir(sourceDirectory, (error, files) => {
             if (error) {
@@ -56,14 +71,14 @@ const copyDirAsync = (function () {
 
                         fs.copyFile(filePath, path.resolve(targetDirectory, fileOrDirectory), (error) => {
                             if (error) {
-                                if(typeof callBack == 'function'){
+                                if (typeof callBack == 'function') {
                                     callBack(error)
                                 }
                                 process.exit()
                             }
                             copyCount++
                             if (copyCount >= fileCount) {
-                                if(typeof callBack == 'function'){
+                                if (typeof callBack == 'function') {
                                     callBack(error)
                                 }
                             }
@@ -88,4 +103,4 @@ const copyDirAsync = (function () {
     }
 })()
 
-module.exports = { copyDir, copyDirAsync }
+module.exports = { copyDirContent, copyDir, copyDirAsync }
