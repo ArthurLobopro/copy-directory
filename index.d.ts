@@ -1,0 +1,2 @@
+export function copyDir(sourceDirectory: string, targetDirectory: string): void
+export function copyDirAsync(sourceDirectory: string, targetDirectory: string, callback?: (err: NodeJS.ErrnoException) => void): void

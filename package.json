@@ -1,0 +1,22 @@
+{
+  "name": "@lobo/copy",
+  "version": "1.0.0",
+  "description": "Easy copy files for nodejs.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "url": "https://github.com/ArthurLobopro/copy-directory.git",
+    "type": "git"
+  },
+  "types": "./index.d.ts",
+  "keywords": [
+    "node",
+    "copy directory",
+    "copy file"
+  ],
+  "author": "Arthur Lobo",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.3.0"
+  }
+}
