@@ -2,10 +2,24 @@ const fs = require('fs')
 const path = require('path')
 const chalk = require('chalk')
 
+function copyFile(filepath, targetDirectory) {
+    if (!fs.statSync(filepath).isFile()) {
+        throw new Error(`${file} não corresponde a um caminho de arquivo`)
+    }
+
+    if (!fs.existsSync(targetDirectory)) {
+        fs.mkdirSync(targetDirectory, { recursive: true })
+    }
+
+    const basename = path.basename(filepath)
+
+    fs.copyFileSync(filepath, path.resolve(targetDirectory, basename))
+}
+
 function copyDirContent(sourceDirectory, targetDirectory) {
 
     if (!fs.statSync(sourceDirectory).isDirectory()) {
-        throw new Error(`${sourceDirectory} não é o caminho de um diretório`)
+        throw new Error(`${sourceDirectory} não corresponde a um caminho de diretório`)
     }
 
     if (!fs.existsSync(targetDirectory)) {
@@ -103,4 +117,4 @@ const copyDirAsync = (function () {
     }
 })()
 
-module.exports = { copyDirContent, copyDir, copyDirAsync }
+module.exports = { copyDirContent, copyFile, copyDir, copyDirAsync }
