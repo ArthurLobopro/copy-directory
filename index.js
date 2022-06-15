@@ -37,7 +37,7 @@ function copyDirContent(sourceDirectory, targetDirectory, ignoreExtensions = [])
         if (isFile && !isIgnoredExtension) {
             console.info(
                 'copy ' +
-                chalk.green(fileOrDirector) +
+                chalk.green(fileOrDir) +
                 ` to ${targetDirectory.substr(targetDirectory.lastIndexOf('/') + 1)} directory`)
             fs.copyFileSync(filePath, path.resolve(targetDirectory, fileOrDir))
         }
