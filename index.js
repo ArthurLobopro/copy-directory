@@ -16,7 +16,7 @@ function copyFile(filepath, targetDirectory) {
     fs.copyFileSync(filepath, path.resolve(targetDirectory, basename))
 }
 
-function copyDirContent(sourceDirectory, targetDirectory) {
+function copyDirContent(sourceDirectory, targetDirectory, ignoreExtensions = []) {
 
     if (!fs.statSync(sourceDirectory).isDirectory()) {
         throw new Error(`${sourceDirectory} não corresponde a um caminho de diretório`)
@@ -26,27 +26,32 @@ function copyDirContent(sourceDirectory, targetDirectory) {
         fs.mkdirSync(targetDirectory, { recursive: true })
     }
 
-    fs.readdirSync(sourceDirectory).forEach(fileOrDirector => {
-        const filePath = path.resolve(sourceDirectory, fileOrDirector)
+    fs.readdirSync(sourceDirectory).forEach(fileOrDir => {
+        const filePath = path.resolve(sourceDirectory, fileOrDir)
         const fsStats = fs.statSync(filePath)
 
-        if (fsStats.isFile()) {
+        const isFile = fsStats.isFile()
+        const isDir = fsStats.isDirectory()
+        const isIgnoredExtension = ignoreExtensions.includes(path.extname(fileOrDir))
+
+        if (isFile && !isIgnoredExtension) {
             console.info(
                 'copy ' +
                 chalk.green(fileOrDirector) +
                 ` to ${targetDirectory.substr(targetDirectory.lastIndexOf('/') + 1)} directory`)
-            fs.copyFileSync(filePath, path.resolve(targetDirectory, fileOrDirector))
+            fs.copyFileSync(filePath, path.resolve(targetDirectory, fileOrDir))
         }
-        if (fsStats.isDirectory()) {
-            const newSourceDir = path.resolve(sourceDirectory, fileOrDirector)
-            const newTargetDir = path.resolve(targetDirectory, fileOrDirector)
+
+        if (isDir) {
+            const newSourceDir = path.resolve(sourceDirectory, fileOrDir)
+            const newTargetDir = path.resolve(targetDirectory, fileOrDir)
             fs.mkdirSync(newTargetDir)
             copyDirContent(newSourceDir, newTargetDir)
         }
     })
 }
 
-function copyDir(sourceDirectory, targetDirectory) {
+function copyDir(sourceDirectory, targetDirectory, ignoreExtensions = []) {
     if (!fs.statSync(sourceDirectory).isDirectory()) {
         throw new Error(`${sourceDirectory} não é o caminho de um diretório`)
     }
@@ -54,7 +59,7 @@ function copyDir(sourceDirectory, targetDirectory) {
     const dirname = path.basename(sourceDirectory)
     const target = path.resolve(targetDirectory, dirname)
 
-    copyDirContent(sourceDirectory, target)
+    copyDirContent(sourceDirectory, target, ignoreExtensions)
 }
 
 const copyDirAsync = (function () {
