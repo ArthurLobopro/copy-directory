@@ -68,7 +68,7 @@ const copyDirAsync = (function () {
         }
         fs.readdir(sourceDirectory, (error, files) => {
             if (error) {
-                console.log(error);
+                console.log(error)
                 return
             }
 
